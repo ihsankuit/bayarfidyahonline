@@ -27,7 +27,16 @@ function setHeaderActions(authenticated, username) {
     return;
   }
 
-  el.innerHTML = `<span class="admin-username">${escapeHtml(username)}</span><button id="logout-btn" class="button outline" type="button">Log Keluar</button>`;
+  const initial = escapeHtml((username || "?").charAt(0).toUpperCase());
+  el.innerHTML = `
+    <div class="user-chip">
+      <span class="user-avatar">${initial}</span>
+      <div class="user-meta">
+        <div class="user-name">${escapeHtml(username)}</div>
+        <div class="user-role">Admin</div>
+      </div>
+    </div>
+    <button id="logout-btn" class="btn btn-ghost btn-sm btn-block" type="button">Log Keluar</button>`;
   document.getElementById("logout-btn").addEventListener("click", logout);
 }
 
@@ -132,7 +141,7 @@ function renderPostList() {
       <li>
         <button type="button" class="post-list-item${post.id === state.currentId ? " active" : ""}" data-id="${post.id}">
           <strong>${escapeHtml(post.title)}</strong>
-          <span class="post-list-status status-${post.status}">${post.status === "published" ? "Terbit" : "Draf"}</span>
+          <span class="pill status-${post.status}">${post.status === "published" ? "Terbit" : "Draf"}</span>
         </button>
       </li>`,
     )
@@ -266,14 +275,12 @@ function renderGalleryForm(images) {
       (img) => `
       <div class="gallery-item-form">
         <h3>Gambar ${img.position}</h3>
-        <div class="img-slot img-slot--wide" id="gallery-preview-${img.position}">
-          ${img.image_url ? `<img src="${escapeHtml(img.image_url)}" alt="Gambar ${img.position}" class="gallery-item-preview-img">` : "<span>Tiada gambar</span><small>Upload di bawah</small>"}
+        <div class="thumb" id="gallery-preview-${img.position}">
+          ${img.image_url ? `<img src="${escapeHtml(img.image_url)}" alt="Gambar ${img.position}">` : "<span>Tiada gambar</span><small>Upload di bawah</small>"}
         </div>
         <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" class="gallery-item-input" data-position="${img.position}">
         <p class="form-error gallery-error" data-position="${img.position}"></p>
-        <div class="gallery-item-actions">
-          ${img.image_url ? `<button type="button" class="button outline gallery-remove-btn" data-position="${img.position}">Buang</button>` : ""}
-        </div>
+        ${img.image_url ? `<button type="button" class="btn btn-danger btn-sm gallery-remove-btn" data-position="${img.position}">Buang gambar</button>` : ""}
       </div>`,
     )
     .join("");
@@ -359,19 +366,19 @@ async function loadDonations() {
 
   const summary = document.getElementById("donations-summary");
   summary.innerHTML = `
-    <div class="donation-stat">
-      <span>Jumlah terkumpul (berjaya)</span>
-      <strong>${formatMYR(data.summary.totalPaidCents)}</strong>
+    <div class="stat">
+      <span class="stat-label">Jumlah terkumpul</span>
+      <span class="stat-value">${formatMYR(data.summary.totalPaidCents)}</span>
     </div>
-    <div class="donation-stat">
-      <span>Bilangan derma berjaya</span>
-      <strong>${data.summary.paidCount}</strong>
+    <div class="stat">
+      <span class="stat-label">Derma berjaya</span>
+      <span class="stat-value">${data.summary.paidCount}</span>
     </div>`;
 
   const body = document.getElementById("donations-body");
   const rows = data.donations || [];
   if (!rows.length) {
-    body.innerHTML = `<tr><td colspan="6" class="donations-empty">Tiada rekod.</td></tr>`;
+    body.innerHTML = `<tr><td colspan="6" class="table-empty">Tiada rekod.</td></tr>`;
     return;
   }
 
@@ -391,7 +398,7 @@ async function loadDonations() {
           <td>${escapeHtml(d.name)}</td>
           <td>${escapeHtml(d.email)}</td>
           <td>${formatMYR(d.amount_cents)}</td>
-          <td><span class="post-list-status ${statusClass}">${statusLabels[d.status] || d.status}</span></td>
+          <td><span class="pill ${statusClass}">${statusLabels[d.status] || d.status}</span></td>
         </tr>`;
     })
     .join("");
@@ -399,19 +406,21 @@ async function loadDonations() {
 
 document.getElementById("donations-filter").addEventListener("change", loadDonations);
 
-// Tab switching
-document.querySelectorAll(".admin-tab").forEach((tab) => {
+// Tab / panel switching
+const panels = { posts: "panel-posts", gallery: "panel-gallery", donations: "panel-donations" };
+
+document.querySelectorAll(".nav-item").forEach((tab) => {
   tab.addEventListener("click", () => {
     const tabName = tab.dataset.tab;
-    document.querySelectorAll(".admin-tab").forEach((t) => t.classList.remove("active"));
+    document.querySelectorAll(".nav-item").forEach((t) => t.classList.remove("active"));
     tab.classList.add("active");
 
-    document.getElementById("posts-tab").hidden = tabName !== "posts";
-    document.getElementById("gallery-tab").hidden = tabName !== "gallery";
-    document.getElementById("donations-tab").hidden = tabName !== "donations";
-    document.getElementById("posts-editor").hidden = tabName !== "posts";
-    document.getElementById("gallery-editor").hidden = tabName !== "gallery";
-    document.getElementById("donations-editor").hidden = tabName !== "donations";
+    Object.entries(panels).forEach(([name, id]) => {
+      document.getElementById(id).hidden = name !== tabName;
+    });
+
+    document.getElementById("stage-title").textContent = tab.dataset.title || "";
+    document.getElementById("stage-sub").textContent = tab.dataset.sub || "";
 
     if (tabName === "gallery") loadGallery();
     if (tabName === "donations") loadDonations();

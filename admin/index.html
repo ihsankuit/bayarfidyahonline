@@ -3,163 +3,217 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Admin Blog | Ihsan Fidyah</title>
+    <title>Admin | Ihsan Fidyah</title>
     <meta name="robots" content="noindex, nofollow">
-    <link rel="stylesheet" href="/styles.css">
     <link rel="stylesheet" href="/admin/admin.css">
     <script defer src="/admin/admin.js"></script>
   </head>
   <body class="admin-body">
-    <header class="site-header">
-      <a class="brand" href="/#top" aria-label="Ihsan Fidyah">
-        <span class="brand-mark" aria-hidden="true">IF</span>
-        <span>
-          <strong>Admin Blog</strong>
-          <small>Pertubuhan IhsanKu Malaysia</small>
-        </span>
-      </a>
-      <div id="admin-header-actions"></div>
-    </header>
-
-    <main class="container admin-main">
-      <section id="setup-view" class="admin-card" hidden>
-        <h1>Setup akaun admin pertama</h1>
-        <p class="small-note">
-          Borang ini hanya boleh digunakan sekali sahaja untuk cipta akaun admin pertama. Setup token ditetapkan
-          semasa deploy (secret <code>SETUP_TOKEN</code>), bukan kata laluan admin.
+    <!-- ===== AUTH: SETUP ===== -->
+    <section id="setup-view" class="auth-shell" hidden>
+      <div class="auth-card">
+        <div class="auth-brand">
+          <span class="brand-mark">IF</span>
+          <div>
+            <strong>Ihsan Fidyah</strong>
+            <small>Panel Admin</small>
+          </div>
+        </div>
+        <h1>Setup akaun pertama</h1>
+        <p class="muted">
+          Borang ini hanya sekali sahaja. <code>Setup token</code> ditetapkan
+          semasa deploy, bukan kata laluan admin.
         </p>
-        <form id="setup-form" class="admin-form">
-          <label for="setup-username">Username</label>
-          <input id="setup-username" name="username" type="text" required autocomplete="username">
-
-          <label for="setup-password">Kata laluan</label>
-          <input id="setup-password" name="password" type="password" minlength="8" required autocomplete="new-password">
-
-          <label for="setup-token">Setup token</label>
-          <input id="setup-token" name="setupToken" type="password" required autocomplete="off">
-
+        <form id="setup-form" class="stack">
+          <div class="field">
+            <label for="setup-username">Username</label>
+            <input id="setup-username" name="username" type="text" required autocomplete="username">
+          </div>
+          <div class="field">
+            <label for="setup-password">Kata laluan</label>
+            <input id="setup-password" name="password" type="password" minlength="8" required autocomplete="new-password">
+          </div>
+          <div class="field">
+            <label for="setup-token">Setup token</label>
+            <input id="setup-token" name="setupToken" type="password" required autocomplete="off">
+          </div>
           <p class="form-error" id="setup-error" role="alert"></p>
-          <button class="button primary full" type="submit">Cipta Akaun Admin</button>
+          <button class="btn btn-primary btn-block" type="submit">Cipta Akaun Admin</button>
         </form>
-      </section>
+      </div>
+    </section>
 
-      <section id="login-view" class="admin-card" hidden>
-        <h1>Log masuk admin</h1>
-        <form id="login-form" class="admin-form">
-          <label for="login-username">Username</label>
-          <input id="login-username" name="username" type="text" required autocomplete="username">
-
-          <label for="login-password">Kata laluan</label>
-          <input id="login-password" name="password" type="password" required autocomplete="current-password">
-
+    <!-- ===== AUTH: LOGIN ===== -->
+    <section id="login-view" class="auth-shell" hidden>
+      <div class="auth-card">
+        <div class="auth-brand">
+          <span class="brand-mark">IF</span>
+          <div>
+            <strong>Ihsan Fidyah</strong>
+            <small>Panel Admin</small>
+          </div>
+        </div>
+        <h1>Log masuk</h1>
+        <p class="muted">Masukkan kelayakan admin anda untuk teruskan.</p>
+        <form id="login-form" class="stack">
+          <div class="field">
+            <label for="login-username">Username</label>
+            <input id="login-username" name="username" type="text" required autocomplete="username">
+          </div>
+          <div class="field">
+            <label for="login-password">Kata laluan</label>
+            <input id="login-password" name="password" type="password" required autocomplete="current-password">
+          </div>
           <p class="form-error" id="login-error" role="alert"></p>
-          <button class="button primary full" type="submit">Log Masuk</button>
+          <button class="btn btn-primary btn-block" type="submit">Log Masuk</button>
         </form>
-      </section>
+      </div>
+    </section>
 
-      <section id="app-view" class="admin-app" hidden>
-        <div class="admin-app-sidebar">
-          <div class="admin-tabs">
-            <button id="tab-posts" class="admin-tab active" data-tab="posts">Post</button>
-            <button id="tab-gallery" class="admin-tab" data-tab="gallery">Galeri</button>
-            <button id="tab-donations" class="admin-tab" data-tab="donations">Derma</button>
-          </div>
-
-          <div id="posts-tab" class="admin-tab-content">
-            <button id="new-post-btn" class="button primary full" type="button">+ Post Baharu</button>
-            <ul id="post-list" class="post-list"></ul>
-          </div>
-
-          <div id="gallery-tab" class="admin-tab-content" hidden>
-            <p class="small-note">6 gambar untuk bahagian galeri di halaman utama</p>
-            <div id="gallery-list" class="gallery-admin-list"></div>
-          </div>
-
-          <div id="donations-tab" class="admin-tab-content" hidden>
-            <div id="donations-summary" class="donations-summary"></div>
-            <label for="donations-filter" class="small-note">Tapis status</label>
-            <select id="donations-filter">
-              <option value="all">Semua</option>
-              <option value="paid">Berjaya</option>
-              <option value="pending">Menunggu</option>
-              <option value="failed">Gagal</option>
-            </select>
+    <!-- ===== DASHBOARD ===== -->
+    <div id="app-view" class="dash" hidden>
+      <aside class="rail">
+        <div class="rail-brand">
+          <span class="brand-mark">IF</span>
+          <div>
+            <strong>Ihsan Fidyah</strong>
+            <small>Panel Admin</small>
           </div>
         </div>
 
-        <div class="admin-app-editor" id="posts-editor">
-          <form id="post-form" class="admin-form">
-            <input type="hidden" id="post-id" value="">
+        <nav class="rail-nav" aria-label="Navigasi admin">
+          <button class="nav-item active" data-tab="posts" data-title="Blog / Post" data-sub="Tulis, edit &amp; terbitkan artikel">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16M4 12h16M4 19h10"/></svg>
+            <span>Post</span>
+          </button>
+          <button class="nav-item" data-tab="gallery" data-title="Galeri" data-sub="6 gambar untuk halaman utama">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9.5" r="1.5"/><path d="M21 15l-5-5L5 20"/></svg>
+            <span>Galeri</span>
+          </button>
+          <button class="nav-item" data-tab="donations" data-title="Derma" data-sub="Rekod fidyah &amp; jumlah terkumpul">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 6.6a5.5 5.5 0 0 0-7.8 0L12 7.6l-1-1a5.5 5.5 0 1 0-7.8 7.8l1 1L12 23l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
+            <span>Derma</span>
+          </button>
+        </nav>
 
-            <label for="post-title">Tajuk</label>
-            <input id="post-title" name="title" type="text" required>
+        <div class="rail-foot" id="admin-header-actions"></div>
+      </aside>
 
-            <label for="post-slug">Slug (URL)</label>
-            <input id="post-slug" name="slug" type="text" placeholder="cth: cara-kira-fidyah">
+      <main class="stage">
+        <header class="topbar">
+          <div>
+            <h1 id="stage-title">Blog / Post</h1>
+            <p id="stage-sub" class="muted">Tulis, edit &amp; terbitkan artikel</p>
+          </div>
+          <a class="btn btn-ghost" href="/" target="_blank" rel="noopener">Lihat laman ↗</a>
+        </header>
 
-            <label for="post-excerpt">Ringkasan (dipaparkan di kad blog)</label>
-            <textarea id="post-excerpt" name="excerpt" rows="2"></textarea>
-
-            <label for="post-content">Kandungan</label>
-            <textarea id="post-content" name="content" rows="12" required></textarea>
-            <p class="small-note">
-              Tulis setiap perenggan dipisahkan dengan baris kosong. Boleh guna **tebal**, *condong*, dan
-              [teks pautan](https://...).
-            </p>
-
-            <label for="post-image-input">Gambar utama (cover)</label>
-            <div class="image-upload">
-              <div id="post-image-preview" class="img-slot img-slot--wide">
-                <span>Tiada gambar</span>
-                <small>Upload di bawah</small>
+        <div class="stage-body">
+          <!-- POSTS -->
+          <section class="panel" id="panel-posts">
+            <div class="split">
+              <div class="split-list card">
+                <div class="card-head">
+                  <h2>Semua post</h2>
+                  <button id="new-post-btn" class="btn btn-primary btn-sm" type="button">+ Baharu</button>
+                </div>
+                <ul id="post-list" class="post-list"></ul>
               </div>
-              <input id="post-image-input" type="file" accept="image/png,image/jpeg,image/webp,image/gif">
-              <input type="hidden" id="post-cover-url" name="coverImageUrl" value="">
-              <p class="form-error" id="upload-error" role="alert"></p>
+
+              <div class="split-detail card">
+                <form id="post-form" class="stack">
+                  <input type="hidden" id="post-id" value="">
+                  <div class="field">
+                    <label for="post-title">Tajuk</label>
+                    <input id="post-title" name="title" type="text" required>
+                  </div>
+                  <div class="field">
+                    <label for="post-slug">Slug (URL)</label>
+                    <input id="post-slug" name="slug" type="text" placeholder="cth: cara-kira-fidyah">
+                  </div>
+                  <div class="field">
+                    <label for="post-excerpt">Ringkasan</label>
+                    <textarea id="post-excerpt" name="excerpt" rows="2"></textarea>
+                  </div>
+                  <div class="field">
+                    <label for="post-content">Kandungan</label>
+                    <textarea id="post-content" name="content" rows="12" required></textarea>
+                    <small class="hint">Perenggan dipisah baris kosong. Boleh guna **tebal**, *condong*, [pautan](https://...).</small>
+                  </div>
+                  <div class="field">
+                    <label for="post-image-input">Gambar utama (cover)</label>
+                    <div class="uploader">
+                      <div id="post-image-preview" class="thumb">
+                        <span>Tiada gambar</span>
+                        <small>Upload di bawah</small>
+                      </div>
+                      <input id="post-image-input" type="file" accept="image/png,image/jpeg,image/webp,image/gif">
+                      <input type="hidden" id="post-cover-url" name="coverImageUrl" value="">
+                      <p class="form-error" id="upload-error" role="alert"></p>
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label for="post-status">Status</label>
+                    <select id="post-status" name="status">
+                      <option value="draft">Draf</option>
+                      <option value="published">Terbitkan</option>
+                    </select>
+                  </div>
+                  <p class="form-error" id="post-error" role="alert"></p>
+                  <div class="actions">
+                    <button class="btn btn-primary" type="submit">Simpan</button>
+                    <button id="delete-post-btn" class="btn btn-danger" type="button" hidden>Padam</button>
+                  </div>
+                </form>
+              </div>
             </div>
+          </section>
 
-            <label for="post-status">Status</label>
-            <select id="post-status" name="status">
-              <option value="draft">Draf</option>
-              <option value="published">Terbitkan</option>
-            </select>
-
-            <p class="form-error" id="post-error" role="alert"></p>
-            <div class="admin-form-actions">
-              <button class="button primary" type="submit">Simpan</button>
-              <button id="delete-post-btn" class="button outline" type="button" hidden>Padam</button>
+          <!-- GALLERY -->
+          <section class="panel" id="panel-gallery" hidden>
+            <div class="card">
+              <div class="card-head">
+                <h2>Gambar galeri</h2>
+                <span class="muted">6 slot &middot; halaman utama</span>
+              </div>
+              <div id="gallery-form" class="gallery-grid-admin"></div>
             </div>
-          </form>
-        </div>
+          </section>
 
-        <div class="admin-app-editor" id="gallery-editor" hidden>
-          <h2>Kelola Gambar Galeri</h2>
-          <div id="gallery-form" class="gallery-form">
-            <!-- Gallery items will be inserted here -->
-          </div>
+          <!-- DONATIONS -->
+          <section class="panel" id="panel-donations" hidden>
+            <div id="donations-summary" class="stat-row"></div>
+            <div class="card">
+              <div class="card-head">
+                <h2>Senarai derma</h2>
+                <select id="donations-filter" class="select-sm">
+                  <option value="all">Semua status</option>
+                  <option value="paid">Berjaya</option>
+                  <option value="pending">Menunggu</option>
+                  <option value="failed">Gagal</option>
+                </select>
+              </div>
+              <div class="table-wrap">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>Tarikh</th>
+                      <th>Rujukan</th>
+                      <th>Nama</th>
+                      <th>Email</th>
+                      <th>Jumlah</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="donations-body">
+                    <tr><td colspan="6" class="table-empty">Memuatkan...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
         </div>
-
-        <div class="admin-app-editor" id="donations-editor" hidden>
-          <h2>Senarai Derma</h2>
-          <div class="donations-table-wrap">
-            <table class="donations-table">
-              <thead>
-                <tr>
-                  <th>Tarikh</th>
-                  <th>Rujukan</th>
-                  <th>Nama</th>
-                  <th>Email</th>
-                  <th>Jumlah</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody id="donations-body">
-                <tr><td colspan="6" class="donations-empty">Memuatkan...</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-    </main>
+      </main>
+    </div>
   </body>
 </html>

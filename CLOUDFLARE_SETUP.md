@@ -17,14 +17,16 @@ Log masuk dahulu ke [dashboard.cloudflare.com](https://dash.cloudflare.com).
    panjang macam `xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`). Awak akan perlukan
    ini di Langkah 2 dan 5.
 
-## 2. Jalankan migration (cipta jadual `admins` dan `posts`)
+## 2. Jalankan migration (cipta semua jadual)
 
-1. Dalam database `bayarfidyah_db` yang baru dicipta, klik tab **Console**.
-2. Buka fail `migrations/0001_init.sql` dalam repo ni, copy **semua** isi
-   kandungannya.
-3. Paste ke dalam kotak Console, klik **Execute** (atau **Run**).
-4. Sahkan tiada ralat — patut nampak 2 jadual berjaya dicipta (`admins`,
-   `posts`).
+Dalam database `bayarfidyah_db`, klik tab **Console**. Jalankan **tiga** fail
+migration ini satu demi satu (copy semua isi, paste, klik **Execute**):
+
+1. `migrations/0001_init.sql` → jadual `admins`, `posts`
+2. `migrations/0002_gallery.sql` → jadual `gallery_images` (6 slot galeri)
+3. `migrations/0003_donations.sql` → jadual `donations` (rekod derma/fidyah)
+
+Sahkan tiada ralat selepas setiap satu.
 
 ## 3. Cipta R2 bucket (untuk simpan gambar)
 
@@ -64,8 +66,31 @@ Masih di halaman **Settings** projek Pages awak → **Environment variables**
    - Nilai: reka kata laluan sementara sendiri (contoh: rentetan yang susah
      diteka). Ini hanya digunakan **sekali** untuk cipta akaun admin pertama
      di Langkah 7.
-3. **Save** — Cloudflare akan minta redeploy untuk env vars baru berkuat
-   kuasa (lihat Langkah 6).
+
+### Secret untuk bayaran (Billplz) & email resit (Resend)
+
+Tambah pula variable-variable ini (semua tandakan **Secret**):
+
+| Variable | Dari mana | Catatan |
+| --- | --- | --- |
+| `BILLPLZ_API_KEY` | Billplz → **Settings → Account Settings** (Secret Key) | Guna kunci **sandbox** dulu untuk ujian |
+| `BILLPLZ_COLLECTION_ID` | Billplz → **Billing → Collections** (cipta satu Collection, salin ID) | |
+| `BILLPLZ_X_SIGNATURE_KEY` | Billplz → **Settings → Account Settings → X Signature Key** | Untuk sahkan webhook |
+| `BILLPLZ_MODE` | Taip sendiri: `sandbox` atau `production` | Biar `sandbox` semasa ujian. Bukan Secret pun tak apa |
+| `RESEND_API_KEY` | Resend → **API Keys → Create** | |
+| `RESEND_FROM` | cth `Ihsan Fidyah <resit@bayarfidyahonline.com>` | Domain mesti disahkan di Resend dulu |
+
+Nota:
+- **Billplz sandbox**: log masuk di `www.billplz-sandbox.com` untuk dapatkan
+  kunci ujian. Bila dah puas hati, tukar ke akaun production dan set
+  `BILLPLZ_MODE=production` + kunci production.
+- **Resend domain**: di Resend → **Domains → Add Domain**, masukkan
+  `bayarfidyahonline.com`, ikut arahan tambah rekod DNS (SPF/DKIM) di
+  Cloudflare. Selepas disahkan, barulah `RESEND_FROM` boleh guna domain itu.
+  Sementara belum disahkan, boleh guna `onboarding@resend.dev` untuk ujian.
+
+Selepas semua ditambah, **Save** — Cloudflare akan minta redeploy untuk env
+vars baru berkuat kuasa (lihat Langkah 6).
 
 ## 6. Deploy semula
 
@@ -90,18 +115,36 @@ untuk dibiarkan dalam kod.
 
 ## 8. Guna admin panel
 
-- **Tulis post**: klik "+ Post Baharu", isi tajuk, ringkasan, kandungan,
-  upload gambar cover (jika ada), pilih status **Draf** atau **Terbitkan**,
-  klik Simpan.
-- **Edit/Padam**: klik mana-mana post dalam senarai sebelah kiri untuk edit,
-  atau klik Padam untuk buang terus.
-- Post berstatus **Terbitkan** akan terus muncul di seksyen Blog laman utama
-  dan boleh diakses di `/blog/<slug>`.
+Di `/admin` ada tiga tab:
+
+- **Post**: klik "+ Post Baharu", isi tajuk, ringkasan, kandungan, upload
+  gambar cover, pilih **Draf**/**Terbitkan**, klik Simpan. Post **Terbitkan**
+  muncul di seksyen Blog laman utama & di `/blog/<slug>`.
+- **Galeri**: upload 6 gambar untuk seksyen Galeri di halaman utama.
+- **Derma**: lihat senarai derma/fidyah masuk, status bayaran, dan jumlah
+  terkumpul (berjaya).
+
+## 9. Uji aliran bayaran (Billplz sandbox)
+
+1. Buka laman utama → kalkulator fidyah → klik **Bayar Fidyah Sekarang**.
+2. Isi nama + email, klik **Teruskan Bayaran** → dibawa ke halaman Billplz.
+3. Dalam **sandbox**, tandakan bil sebagai "paid" (Billplz sandbox ada butang
+   simulasi bayaran) → anda diredirect ke halaman "Terima kasih".
+4. Semak: (a) email resit sampai, (b) tab **Derma** di admin tunjuk status
+   **Berjaya**.
+
+Bila semua elok, tukar ke akaun **production** Billplz: kemas kini
+`BILLPLZ_API_KEY`, `BILLPLZ_COLLECTION_ID`, `BILLPLZ_X_SIGNATURE_KEY` dengan
+kunci production dan set `BILLPLZ_MODE=production`, kemudian redeploy.
 
 ## Nota keselamatan
 
-- Jangan kongsi `SESSION_SECRET` atau `SETUP_TOKEN` dengan sesiapa — kekalkan
+- Jangan kongsi `SESSION_SECRET`, `SETUP_TOKEN`, `BILLPLZ_API_KEY`,
+  `BILLPLZ_X_SIGNATURE_KEY` atau `RESEND_API_KEY` dengan sesiapa — kekalkan
   hanya dalam Environment variables (Secret) Cloudflare.
+- Status bayaran disahkan melalui **webhook Billplz** (`/api/donate/callback`)
+  yang mengesahkan `X-Signature`, bukan bergantung pada redirect sahaja — jadi
+  status derma tak boleh dipalsukan dari pihak pengguna.
 - Gambar yang diupload disimpan di R2 dan disajikan melalui `/images/...`
   (bukan akses terus ke bucket), jadi tiada keperluan aktifkan akses awam R2.
 

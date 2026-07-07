@@ -17,7 +17,6 @@
     <meta property="og:image" content="https://images.pexels.com/photos/6995220/pexels-photo-6995220.jpeg">
     <link rel="stylesheet" href="styles.css">
     <script defer src="script.js"></script>
-    <script defer src="https://cdn.onpay.my/assets/plugins/iframe-resizer/iframeResizer.13887afc.min.js"></script>
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -253,22 +252,38 @@
         <div class="container payment-layout">
           <div class="section-head">
             <p class="section-label">Borang bayaran</p>
-            <h2>Bayar fidyah melalui OnPay</h2>
+            <h2>Bayar fidyah secara online</h2>
             <p>
-              Selepas semak jumlah fidyah di kalkulator, lengkapkan maklumat bayaran di borang OnPay di bawah.
+              Semak jumlah fidyah di kalkulator, isi maklumat di bawah, kemudian teruskan
+              bayaran melalui FPX / online banking dengan selamat.
             </p>
           </div>
           <div class="payment-card">
-            <div id="onpay-order-form" data-url="https://sumbang.ihsanku.org/order/form/174" data-only_form="1">
-              <iframe
-                id="onpay-order-form-iframe"
-                title="Borang bayaran fidyah OnPay"
-                src="https://sumbang.ihsanku.org/order/form/174?embed=1&only_form=1"
-                loading="eager"
-                referrerpolicy="strict-origin-when-cross-origin"
-                width="100%"
-              ></iframe>
-            </div>
+            <form id="donate-form" class="donate-form">
+              <div class="donate-summary">
+                <span>Jumlah fidyah untuk dibayar</span>
+                <strong id="donate-amount">RM28.00</strong>
+                <small id="donate-breakdown">7 hari &times; RM4.00</small>
+              </div>
+
+              <label for="donate-name">Nama penuh</label>
+              <input id="donate-name" name="name" type="text" required autocomplete="name">
+
+              <label for="donate-email">Email (untuk resit)</label>
+              <input id="donate-email" name="email" type="email" required autocomplete="email">
+
+              <label for="donate-phone">No. telefon (pilihan)</label>
+              <input id="donate-phone" name="phone" type="tel" autocomplete="tel" placeholder="0123456789">
+
+              <p class="form-error" id="donate-error" role="alert"></p>
+              <button id="donate-submit" class="button primary full" type="submit">
+                Teruskan Bayaran
+              </button>
+              <p class="small-note">
+                Anda akan dibawa ke halaman bayaran selamat Billplz. Resit rasmi akan
+                dihantar ke email anda selepas bayaran berjaya.
+              </p>
+            </form>
           </div>
         </div>
       </section>

@@ -62,6 +62,7 @@
           <div class="admin-tabs">
             <button id="tab-posts" class="admin-tab active" data-tab="posts">Post</button>
             <button id="tab-gallery" class="admin-tab" data-tab="gallery">Galeri</button>
+            <button id="tab-donations" class="admin-tab" data-tab="donations">Derma</button>
           </div>
 
           <div id="posts-tab" class="admin-tab-content">
@@ -72,6 +73,17 @@
           <div id="gallery-tab" class="admin-tab-content" hidden>
             <p class="small-note">6 gambar untuk bahagian galeri di halaman utama</p>
             <div id="gallery-list" class="gallery-admin-list"></div>
+          </div>
+
+          <div id="donations-tab" class="admin-tab-content" hidden>
+            <div id="donations-summary" class="donations-summary"></div>
+            <label for="donations-filter" class="small-note">Tapis status</label>
+            <select id="donations-filter">
+              <option value="all">Semua</option>
+              <option value="paid">Berjaya</option>
+              <option value="pending">Menunggu</option>
+              <option value="failed">Gagal</option>
+            </select>
           </div>
         </div>
 
@@ -124,6 +136,27 @@
           <h2>Kelola Gambar Galeri</h2>
           <div id="gallery-form" class="gallery-form">
             <!-- Gallery items will be inserted here -->
+          </div>
+        </div>
+
+        <div class="admin-app-editor" id="donations-editor" hidden>
+          <h2>Senarai Derma</h2>
+          <div class="donations-table-wrap">
+            <table class="donations-table">
+              <thead>
+                <tr>
+                  <th>Tarikh</th>
+                  <th>Rujukan</th>
+                  <th>Nama</th>
+                  <th>Email</th>
+                  <th>Jumlah</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="donations-body">
+                <tr><td colspan="6" class="donations-empty">Memuatkan...</td></tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </section>

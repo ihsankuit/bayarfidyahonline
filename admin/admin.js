@@ -255,8 +255,8 @@ document.getElementById("delete-post-btn").addEventListener("click", async () =>
 async function loadGallery() {
   const res = await fetch("/api/gallery");
   if (!res.ok) return;
-  const images = await res.json();
-  renderGalleryForm(images);
+  const data = await res.json();
+  renderGalleryForm(data.images || []);
 }
 
 function renderGalleryForm(images) {
@@ -340,6 +340,65 @@ async function handleGalleryRemove(event) {
   await loadGallery();
 }
 
+// Donations
+function formatMYR(cents) {
+  return new Intl.NumberFormat("ms-MY", {
+    style: "currency",
+    currency: "MYR",
+    minimumFractionDigits: 2,
+  }).format((cents || 0) / 100);
+}
+
+const statusLabels = { paid: "Berjaya", pending: "Menunggu", failed: "Gagal" };
+
+async function loadDonations() {
+  const filter = document.getElementById("donations-filter").value;
+  const res = await fetch(`/api/donations?status=${encodeURIComponent(filter)}&limit=200`);
+  if (!res.ok) return;
+  const data = await res.json();
+
+  const summary = document.getElementById("donations-summary");
+  summary.innerHTML = `
+    <div class="donation-stat">
+      <span>Jumlah terkumpul (berjaya)</span>
+      <strong>${formatMYR(data.summary.totalPaidCents)}</strong>
+    </div>
+    <div class="donation-stat">
+      <span>Bilangan derma berjaya</span>
+      <strong>${data.summary.paidCount}</strong>
+    </div>`;
+
+  const body = document.getElementById("donations-body");
+  const rows = data.donations || [];
+  if (!rows.length) {
+    body.innerHTML = `<tr><td colspan="6" class="donations-empty">Tiada rekod.</td></tr>`;
+    return;
+  }
+
+  body.innerHTML = rows
+    .map((d) => {
+      const date = new Date(d.paid_at || d.created_at).toLocaleDateString("ms-MY", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      });
+      const statusClass =
+        d.status === "paid" ? "status-published" : d.status === "failed" ? "status-failed" : "status-draft";
+      return `
+        <tr>
+          <td>${date}</td>
+          <td><code>${escapeHtml(d.reference)}</code></td>
+          <td>${escapeHtml(d.name)}</td>
+          <td>${escapeHtml(d.email)}</td>
+          <td>${formatMYR(d.amount_cents)}</td>
+          <td><span class="post-list-status ${statusClass}">${statusLabels[d.status] || d.status}</span></td>
+        </tr>`;
+    })
+    .join("");
+}
+
+document.getElementById("donations-filter").addEventListener("change", loadDonations);
+
 // Tab switching
 document.querySelectorAll(".admin-tab").forEach((tab) => {
   tab.addEventListener("click", () => {
@@ -349,12 +408,13 @@ document.querySelectorAll(".admin-tab").forEach((tab) => {
 
     document.getElementById("posts-tab").hidden = tabName !== "posts";
     document.getElementById("gallery-tab").hidden = tabName !== "gallery";
+    document.getElementById("donations-tab").hidden = tabName !== "donations";
     document.getElementById("posts-editor").hidden = tabName !== "posts";
     document.getElementById("gallery-editor").hidden = tabName !== "gallery";
+    document.getElementById("donations-editor").hidden = tabName !== "donations";
 
-    if (tabName === "gallery") {
-      loadGallery();
-    }
+    if (tabName === "gallery") loadGallery();
+    if (tabName === "donations") loadDonations();
   });
 });
 

@@ -5,7 +5,7 @@ compatibility_date = "2024-11-01"
 [[d1_databases]]
 binding = "DB"
 database_name = "bayarfidyah_db"
-database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+database_id = "bb94946f-c40f-4d97-a90d-e73985db6cb4"
 
 [[r2_buckets]]
 binding = "IMAGES"

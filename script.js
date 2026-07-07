@@ -116,3 +116,29 @@ const loadBlogPosts = async () => {
 };
 
 loadBlogPosts();
+
+const loadGallery = async () => {
+  const gallery = document.querySelector("#gallery-grid");
+  if (!gallery) return;
+
+  try {
+    const res = await fetch("/api/gallery");
+    if (!res.ok) return;
+
+    const images = await res.json();
+    const slots = gallery.querySelectorAll(".img-slot");
+
+    images.forEach((img) => {
+      const slot = slots[img.position - 1];
+      if (!slot) return;
+
+      if (img.image_url) {
+        slot.innerHTML = `<img src="${escapeHtml(img.image_url)}" alt="Gambar ${img.position}">`;
+      }
+    });
+  } catch {
+    // Kekalkan slot statik sedia ada jika API belum tersedia.
+  }
+};
+
+loadGallery();

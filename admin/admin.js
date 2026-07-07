@@ -251,4 +251,111 @@ document.getElementById("delete-post-btn").addEventListener("click", async () =>
   await loadPosts();
 });
 
+// Gallery management
+async function loadGallery() {
+  const res = await fetch("/api/gallery");
+  if (!res.ok) return;
+  const images = await res.json();
+  renderGalleryForm(images);
+}
+
+function renderGalleryForm(images) {
+  const form = document.getElementById("gallery-form");
+  form.innerHTML = images
+    .map(
+      (img) => `
+      <div class="gallery-item-form">
+        <h3>Gambar ${img.position}</h3>
+        <div class="img-slot img-slot--wide" id="gallery-preview-${img.position}">
+          ${img.image_url ? `<img src="${escapeHtml(img.image_url)}" alt="Gambar ${img.position}" class="gallery-item-preview-img">` : "<span>Tiada gambar</span><small>Upload di bawah</small>"}
+        </div>
+        <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" class="gallery-item-input" data-position="${img.position}">
+        <p class="form-error gallery-error" data-position="${img.position}"></p>
+        <div class="gallery-item-actions">
+          ${img.image_url ? `<button type="button" class="button outline gallery-remove-btn" data-position="${img.position}">Buang</button>` : ""}
+        </div>
+      </div>`,
+    )
+    .join("");
+
+  form.querySelectorAll(".gallery-item-input").forEach((input) => {
+    input.addEventListener("change", handleGalleryUpload);
+  });
+
+  form.querySelectorAll(".gallery-remove-btn").forEach((btn) => {
+    btn.addEventListener("click", handleGalleryRemove);
+  });
+}
+
+async function handleGalleryUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const position = event.target.dataset.position;
+  const errorEl = document.querySelector(`.gallery-error[data-position="${position}"]`);
+  errorEl.textContent = "";
+
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const res = await fetch("/api/upload", { method: "POST", body: formData });
+  const data = await res.json();
+
+  if (!res.ok) {
+    errorEl.textContent = data.error || "Upload gagal.";
+    return;
+  }
+
+  const updateRes = await fetch("/api/gallery", {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ position: Number(position), image_url: data.url }),
+  });
+
+  if (!updateRes.ok) {
+    errorEl.textContent = "Gagal simpan gambar.";
+    return;
+  }
+
+  await loadGallery();
+}
+
+async function handleGalleryRemove(event) {
+  event.preventDefault();
+  const position = event.target.dataset.position;
+  if (!window.confirm("Buang gambar ini?")) return;
+
+  const updateRes = await fetch("/api/gallery", {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ position: Number(position), image_url: null }),
+  });
+
+  if (!updateRes.ok) {
+    const errorEl = document.querySelector(`.gallery-error[data-position="${position}"]`);
+    errorEl.textContent = "Gagal buang gambar.";
+    return;
+  }
+
+  await loadGallery();
+}
+
+// Tab switching
+document.querySelectorAll(".admin-tab").forEach((tab) => {
+  tab.addEventListener("click", () => {
+    const tabName = tab.dataset.tab;
+    document.querySelectorAll(".admin-tab").forEach((t) => t.classList.remove("active"));
+    tab.classList.add("active");
+
+    document.getElementById("posts-tab").hidden = tabName !== "posts";
+    document.getElementById("gallery-tab").hidden = tabName !== "gallery";
+    document.getElementById("posts-editor").hidden = tabName !== "posts";
+    document.getElementById("gallery-editor").hidden = tabName !== "gallery";
+
+    if (tabName === "gallery") {
+      loadGallery();
+    }
+  });
+});
+
 init();

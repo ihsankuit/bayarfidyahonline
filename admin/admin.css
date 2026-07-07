@@ -148,6 +148,80 @@
   margin-top: 8px;
 }
 
+.admin-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+.admin-tab {
+  flex: 1;
+  padding: 12px 14px;
+  text-align: center;
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+  font: inherit;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.admin-tab.active {
+  color: var(--teal);
+  border-bottom-color: var(--teal);
+}
+
+.gallery-admin-list {
+  display: grid;
+  gap: 8px;
+}
+
+.gallery-item-preview {
+  padding: 12px 14px;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.gallery-item-preview.active {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(8, 118, 109, 0.12);
+}
+
+.gallery-form {
+  display: grid;
+  gap: 24px;
+}
+
+.gallery-item-form {
+  padding: 20px;
+  background: #fafaf8;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.gallery-item-form h3 {
+  margin: 0 0 14px;
+  font-size: 1.1rem;
+}
+
+.gallery-item-preview-img {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.gallery-item-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
 @media (max-width: 940px) {
   .admin-app {
     grid-template-columns: 1fr;

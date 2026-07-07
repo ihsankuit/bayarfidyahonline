@@ -1,0 +1,155 @@
+.admin-body {
+  background: var(--paper);
+}
+
+.admin-main {
+  padding: 40px 0 80px;
+}
+
+#admin-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.admin-username {
+  font-weight: 800;
+}
+
+.admin-card {
+  max-width: 420px;
+  margin: 60px auto;
+  padding: 32px;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+}
+
+.admin-form {
+  display: grid;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.admin-form textarea {
+  width: 100%;
+  padding: 12px 14px;
+  color: var(--ink);
+  background: var(--white);
+  border: 1px solid #cfd8d1;
+  border-radius: 8px;
+  resize: vertical;
+}
+
+.admin-form textarea:focus {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 4px rgba(8, 118, 109, 0.12);
+  outline: none;
+}
+
+.form-error {
+  min-height: 1.2em;
+  margin: 0;
+  color: var(--coral);
+  font-size: 0.86rem;
+}
+
+.admin-app {
+  display: grid;
+  grid-template-columns: minmax(240px, 320px) minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.admin-app-sidebar {
+  display: grid;
+  gap: 14px;
+}
+
+.post-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.post-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  padding: 12px 14px;
+  text-align: left;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+}
+
+.post-list-item.active {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(8, 118, 109, 0.12);
+}
+
+.post-list-status {
+  padding: 2px 8px;
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.status-draft {
+  background: var(--gold-soft);
+  color: #5c3a05;
+}
+
+.status-published {
+  background: var(--green-soft);
+  color: var(--teal-dark);
+}
+
+.post-list-empty {
+  padding: 12px;
+  color: var(--muted);
+}
+
+.admin-app-editor {
+  padding: 24px;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.image-upload {
+  display: grid;
+  gap: 10px;
+}
+
+.image-upload img {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  aspect-ratio: 16 / 9;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.admin-form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+@media (max-width: 940px) {
+  .admin-app {
+    grid-template-columns: 1fr;
+  }
+}

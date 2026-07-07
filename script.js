@@ -62,3 +62,57 @@ window.addEventListener("load", () => {
     window.setTimeout(setupOnpayFrame, 1500);
   }
 });
+
+const escapeHtml = (str) =>
+  String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+
+const renderBlogCard = (post, index) => {
+  const cover = post.cover_image_url
+    ? `<img class="blog-thumb" src="${escapeHtml(post.cover_image_url)}" alt="${escapeHtml(post.title)}">`
+    : `<div class="img-slot img-slot--wide blog-thumb"><span>Gambar</span><small>Belum diupload</small></div>`;
+
+  const dateLabel = new Date(post.published_at || post.created_at).toLocaleDateString("ms-MY", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+
+  return `
+    <article class="blog-card${index === 1 ? " featured" : ""}">
+      ${cover}
+      <div class="blog-card-body">
+        <div class="blog-meta">
+          <span>Blog</span>
+          <span>${dateLabel}</span>
+        </div>
+        <h3>${escapeHtml(post.title)}</h3>
+        <p>${escapeHtml(post.excerpt || "")}</p>
+        <a href="/blog/${encodeURIComponent(post.slug)}" aria-label="Baca ${escapeHtml(post.title)}">Baca panduan</a>
+      </div>
+    </article>
+  `;
+};
+
+const loadBlogPosts = async () => {
+  const grid = document.querySelector("#blog-grid");
+  if (!grid) return;
+
+  try {
+    const res = await fetch("/api/posts?status=published&limit=6");
+    if (!res.ok) return;
+
+    const data = await res.json();
+    const posts = data.posts || [];
+    if (!posts.length) return;
+
+    grid.innerHTML = posts.map(renderBlogCard).join("");
+  } catch {
+    // Kekalkan kad statik sedia ada jika API belum tersedia.
+  }
+};
+
+loadBlogPosts();

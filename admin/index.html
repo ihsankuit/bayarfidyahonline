@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="ms">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Admin Blog | Ihsan Fidyah</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="/admin/admin.css">
+    <script defer src="/admin/admin.js"></script>
+  </head>
+  <body class="admin-body">
+    <header class="site-header">
+      <a class="brand" href="/#top" aria-label="Ihsan Fidyah">
+        <span class="brand-mark" aria-hidden="true">IF</span>
+        <span>
+          <strong>Admin Blog</strong>
+          <small>Pertubuhan IhsanKu Malaysia</small>
+        </span>
+      </a>
+      <div id="admin-header-actions"></div>
+    </header>
+
+    <main class="container admin-main">
+      <section id="setup-view" class="admin-card" hidden>
+        <h1>Setup akaun admin pertama</h1>
+        <p class="small-note">
+          Borang ini hanya boleh digunakan sekali sahaja untuk cipta akaun admin pertama. Setup token ditetapkan
+          semasa deploy (secret <code>SETUP_TOKEN</code>), bukan kata laluan admin.
+        </p>
+        <form id="setup-form" class="admin-form">
+          <label for="setup-username">Username</label>
+          <input id="setup-username" name="username" type="text" required autocomplete="username">
+
+          <label for="setup-password">Kata laluan</label>
+          <input id="setup-password" name="password" type="password" minlength="8" required autocomplete="new-password">
+
+          <label for="setup-token">Setup token</label>
+          <input id="setup-token" name="setupToken" type="password" required autocomplete="off">
+
+          <p class="form-error" id="setup-error" role="alert"></p>
+          <button class="button primary full" type="submit">Cipta Akaun Admin</button>
+        </form>
+      </section>
+
+      <section id="login-view" class="admin-card" hidden>
+        <h1>Log masuk admin</h1>
+        <form id="login-form" class="admin-form">
+          <label for="login-username">Username</label>
+          <input id="login-username" name="username" type="text" required autocomplete="username">
+
+          <label for="login-password">Kata laluan</label>
+          <input id="login-password" name="password" type="password" required autocomplete="current-password">
+
+          <p class="form-error" id="login-error" role="alert"></p>
+          <button class="button primary full" type="submit">Log Masuk</button>
+        </form>
+      </section>
+
+      <section id="app-view" class="admin-app" hidden>
+        <div class="admin-app-sidebar">
+          <button id="new-post-btn" class="button primary full" type="button">+ Post Baharu</button>
+          <ul id="post-list" class="post-list"></ul>
+        </div>
+
+        <div class="admin-app-editor">
+          <form id="post-form" class="admin-form">
+            <input type="hidden" id="post-id" value="">
+
+            <label for="post-title">Tajuk</label>
+            <input id="post-title" name="title" type="text" required>
+
+            <label for="post-slug">Slug (URL)</label>
+            <input id="post-slug" name="slug" type="text" placeholder="cth: cara-kira-fidyah">
+
+            <label for="post-excerpt">Ringkasan (dipaparkan di kad blog)</label>
+            <textarea id="post-excerpt" name="excerpt" rows="2"></textarea>
+
+            <label for="post-content">Kandungan</label>
+            <textarea id="post-content" name="content" rows="12" required></textarea>
+            <p class="small-note">
+              Tulis setiap perenggan dipisahkan dengan baris kosong. Boleh guna **tebal**, *condong*, dan
+              [teks pautan](https://...).
+            </p>
+
+            <label for="post-image-input">Gambar utama (cover)</label>
+            <div class="image-upload">
+              <div id="post-image-preview" class="img-slot img-slot--wide">
+                <span>Tiada gambar</span>
+                <small>Upload di bawah</small>
+              </div>
+              <input id="post-image-input" type="file" accept="image/png,image/jpeg,image/webp,image/gif">
+              <input type="hidden" id="post-cover-url" name="coverImageUrl" value="">
+              <p class="form-error" id="upload-error" role="alert"></p>
+            </div>
+
+            <label for="post-status">Status</label>
+            <select id="post-status" name="status">
+              <option value="draft">Draf</option>
+              <option value="published">Terbitkan</option>
+            </select>
+
+            <p class="form-error" id="post-error" role="alert"></p>
+            <div class="admin-form-actions">
+              <button class="button primary" type="submit">Simpan</button>
+              <button id="delete-post-btn" class="button outline" type="button" hidden>Padam</button>
+            </div>
+          </form>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

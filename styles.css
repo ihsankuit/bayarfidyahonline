@@ -541,6 +541,8 @@ select:focus {
   justify-content: center;
   gap: 8px;
   padding: 16px;
+  min-width: 0;
+  overflow: hidden;
   text-align: center;
   background: repeating-linear-gradient(
     45deg,
@@ -699,6 +701,9 @@ select:focus {
 }
 
 .blog-card .blog-thumb {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
   border: 0;
   border-radius: 0;
 }
@@ -751,6 +756,38 @@ select:focus {
   border-top: 2px solid currentColor;
   border-right: 2px solid currentColor;
   transform: rotate(45deg);
+}
+
+.post-container {
+  max-width: 760px;
+}
+
+.post-date {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.post-cover {
+  width: 100%;
+  margin-top: 24px;
+  border-radius: 8px;
+  object-fit: cover;
+  aspect-ratio: 16 / 9;
+}
+
+.post-content {
+  display: grid;
+  gap: 16px;
+  margin-top: 24px;
+  color: var(--ink);
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+
+.post-content a {
+  color: var(--teal);
+  text-decoration: underline;
 }
 
 .faq-section {
